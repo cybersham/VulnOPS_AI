@@ -1,0 +1,29 @@
+services:
+  db:
+    image: postgres:16
+    container_name: vulnops_db
+    restart: always
+    environment:
+      POSTGRES_USER: vulnops_user
+      POSTGRES_PASSWORD: vulnops_pass
+      POSTGRES_DB: vulnops_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  app:
+    build: .
+    container_name: vulnops_app
+    restart: always
+    depends_on:
+      - db
+    ports:
+      - "8000:8000"
+    env_file:
+      - .env
+    volumes:
+      - .:/app
+
+volumes:
+  postgres_data:
