@@ -1,0 +1,26 @@
+{
+    "ipynb.pasteImagesAsAttachments.enabled": true,
+    "diffEditor.hideUnchangedRegions.enabled": true,
+    "editor.aiStats.enabled": true,
+    "workbench.experimental.share.enabled": true,
+    "workbench.editor.enablePreviewFromCodeNavigation": true,
+    "workbench.editor.enablePreviewFromQuickOpen": true,
+    "workbench.editor.limit.enabled": true,
+    "workbench.browser.enableRemoteProxy": true,
+    "chat.agent.sandbox.enabled": "on",
+    "chat.editing.explainChanges.enabled": false,
+    "chat.viewProgressBadge.enabled": true,
+    "chat.viewSessions.enabled": true,
+    "chat.mcp.discovery.enabled": {
+        "claude-desktop": true,
+        "windsurf": true,
+        "cursor-global": true,
+        "cursor-workspace": true
+    },
+    "chat.tools.compressOutput.enabled": true,
+    "chat.mcp.gallery.enabled": true,
+    "chat.mcp.apps.enabled": true,
+    "chat.mcp.assisted.nuget.enabled": true,
+    "testing.gutterEnabled": true,
+    "scm.workingSets.enabled": true
+}

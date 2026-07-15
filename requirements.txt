@@ -4,3 +4,4 @@ sqlalchemy
 psycopg2-binary
 python-dotenv
 requests
+mcp[cli]>=1.27,<2
