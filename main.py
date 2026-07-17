@@ -9,6 +9,9 @@ import os
 import time
 from nvd_client import fetch_cve_from_nvd
 from cisa_client import fetch_kev_catalog
+from rag_service import embed_and_store_cves
+from rag_service import query_vulnerabilities_semantic
+from pydantic import BaseModel
 
 models.Base.metadata.create_all(bind=engine)
 
@@ -59,6 +62,27 @@ def enrich_cves(db:Session = Depends(get_db)):
 
     db.commit()
     return {"enriched": enriched_count, "kev_matches": sum(1 for c in cves if c.is_kev)}
+
+
+@app.post("/sync/embed")
+def sync_embed(db: Session = Depends(get_db)):
+    return embed_and_store_cves(db)
+
+
+class QuestionRequest(BaseModel):
+    question: str
+
+@app.post("/ask")
+def ask_question(request: QuestionRequest):
+    return query_vulnerabilities_semantic(request.question)
+
+
+
+
+
+
+
+
 
 
 

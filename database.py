@@ -1,10 +1,13 @@
-import os 
+import os
+from dotenv import load_dotenv
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker, declarative_base
 
+load_dotenv()  # loads .env if present (harmless no-op inside Docker, where env_file already injected vars)
+
 DATABASE_URL = os.environ.get("DATABASE_URL")
 
-engine = create_engine(DATABASE_URL) ## Check_same_thread handles multiple threads for the same Db connection 
+engine = create_engine(DATABASE_URL)
 
 sessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
@@ -16,7 +19,3 @@ def get_db():
         yield db
     finally:
         db.close()
-
-
-
-

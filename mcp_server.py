@@ -2,6 +2,7 @@ from mcp.server.fastmcp import FastMCP
 from sqlalchemy.orm import Session
 from database import sessionLocal
 import models
+from rag_service import query_vulnerabilities_semantic
 
 mcp = FastMCP("VulnOPS AI")
 
@@ -59,5 +60,22 @@ def get_kev_findings() -> list[dict]:
     finally:
         db.close()
 
+
+
+
+@mcp.tool()
+def ask_vulnerability_question(question: str) -> dict:
+    """
+    Answers natural-language, fuzzy questions about vulnerabilities using
+    semantic search (RAG) over CVE descriptions. Use this for open-ended or
+    conceptual questions that don't map to an exact filter — for example,
+    "are there any injection-related vulnerabilities" or "what's my biggest
+    risk right now". For exact structured queries (all open findings, all
+    KEV findings), prefer get_open_findings or get_kev_findings instead.
+    """
+    return query_vulnerabilities_semantic(question)
+
 if __name__ == "__main__":
     mcp.run(transport="stdio")
+
+
