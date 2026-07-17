@@ -5,11 +5,14 @@ from google import genai
 from google.genai.types import EmbedContentConfig
 from sqlalchemy.orm import Session
 import models
+import os
+chroma_path = os.getenv("CHROMA_PATH", "./chroma_data")
 
 GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
 client = genai.Client(api_key=GEMINI_API_KEY)
 
-chroma_client = chromadb.PersistentClient(path="/app/chroma_db")
+
+chroma_client = chromadb.PersistentClient(path=chroma_path)
 collection = chroma_client.get_or_create_collection(name="cve_descriptions")
 
 def embed_and_store_cves(db: Session) -> dict:
