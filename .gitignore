@@ -1,4 +1,6 @@
 .__pycache__/
 *.pyc
 .env
-
+.env.local
+chroma_data/
+venv/
