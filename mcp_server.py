@@ -3,8 +3,19 @@ from sqlalchemy.orm import Session
 from database import sessionLocal
 import models
 from rag_service import query_vulnerabilities_semantic
+import os 
+from mcp.server.transport_security import TransportSecuritySettings
 
-mcp = FastMCP("VulnOPS AI")
+allowed_host = os.getenv("MCP_ALLOWED_HOST", "localhost:*")
+
+mcp = FastMCP(
+    "VulnOps AI",
+    transport_security=TransportSecuritySettings(
+        enable_dns_rebinding_protection=True,
+        allowed_hosts=["localhost:*", "127.0.0.1:*", allowed_host],
+        allowed_origins=["http://localhost:*", "http://127.0.0.1:*", f"https://{allowed_host}"],
+    )
+)
 
 def get_db_session() -> Session:
      return sessionLocal()
