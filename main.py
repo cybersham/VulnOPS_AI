@@ -12,6 +12,8 @@ from cisa_client import fetch_kev_catalog
 from rag_service import embed_and_store_cves
 from rag_service import query_vulnerabilities_semantic
 from pydantic import BaseModel
+import contextlib
+from mcp_server import mcp
 
 models.Base.metadata.create_all(bind=engine)
 
@@ -81,7 +83,21 @@ def ask_question(request: QuestionRequest):
 
 
 
+# Build the MCP app as an HTTP-mountable ASGI sub-application
+mcp_app = mcp.streamable_http_app()
 
+@contextlib.asynccontextmanager
+async def lifespan(app: FastAPI):
+    async with mcp.session_manager.run():
+        yield
+
+app = FastAPI(title="VulnOps AI", lifespan=lifespan)
+
+# ... all your existing routes stay exactly as they are (models.Base.metadata.create_all, 
+#     /sync/dependabot, /sync/enrich, /sync/embed, /ask, etc.) ...
+
+# Mount MCP's HTTP transport under /mcp
+app.mount("", mcp_app)
 
 
 
