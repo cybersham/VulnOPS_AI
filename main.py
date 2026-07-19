@@ -1,4 +1,4 @@
-from fastapi import FastAPI,Depends
+from fastapi import FastAPI, Depends
 import models
 from database import engine
 from sqlalchemy.orm import Session
@@ -17,19 +17,22 @@ from mcp_server import mcp
 
 models.Base.metadata.create_all(bind=engine)
 
-app = FastAPI(title="VulnOps AI")
+# Build the MCP HTTP app and lifespan BEFORE creating the FastAPI app
+mcp_app = mcp.streamable_http_app()
+
+@contextlib.asynccontextmanager
+async def lifespan(app: FastAPI):
+    async with mcp.session_manager.run():
+        yield
+
+# Create the app ONCE, with lifespan wired in from the start
+app = FastAPI(title="VulnOps AI", lifespan=lifespan)
+
 
 @app.get("/")
 def read_root():
     return {"message": "VulnOps AI is running"}
 
-
-from github_client import fetch_dependabot_alerts
-
-
-# @app.get("/test-github")
-# def test_github():
-#     return fetch_dependabot_alerts()
 
 @app.post("/sync/dependabot")
 def sync_dependabot(db: Session = Depends(get_db)):
@@ -42,23 +45,22 @@ def sync_dependabot(db: Session = Depends(get_db)):
     )
     return {"synced_findings": count, "total_alerts_received": len(alerts)}
 
+
 @app.post("/sync/enrich")
-def enrich_cves(db:Session = Depends(get_db)):
-    kev_set = fetch_kev_catalog() #### CISA CATALOG CVE INFORMATION actively exploitable cves
-    cves = db.query(models.CVE).all() ##### calling the DB table 
-    enriched_count=0
-    
+def enrich_cves(db: Session = Depends(get_db)):
+    kev_set = fetch_kev_catalog()
+    cves = db.query(models.CVE).all()
+    enriched_count = 0
 
     for cve in cves:
-        exploitable_cve = cve.cve_id in kev_set  #### fetching the rows from the table cves 
-        cve.is_kev = exploitable_cve #### her updating the db column CVE ID 
-         
-        # NVD lookup — only if we don't already have a CVSS score
+        exploitable_cve = cve.cve_id in kev_set
+        cve.is_kev = exploitable_cve
+
         if cve.cvss_score is None:
             nvd_data = fetch_cve_from_nvd(cve.cve_id)
             if nvd_data and nvd_data["cvss_score"]:
                 cve.cvss_score = nvd_data["cvss_score"]
-            time.sleep(6)  # pace requests to respect NVD rate limits
+            time.sleep(6)
 
         enriched_count += 1
 
@@ -79,30 +81,5 @@ def ask_question(request: QuestionRequest):
     return query_vulnerabilities_semantic(request.question)
 
 
-
-
-
-
-# Build the MCP app as an HTTP-mountable ASGI sub-application
-mcp_app = mcp.streamable_http_app()
-
-@contextlib.asynccontextmanager
-async def lifespan(app: FastAPI):
-    async with mcp.session_manager.run():
-        yield
-
-app = FastAPI(title="VulnOps AI", lifespan=lifespan)
-
-# ... all your existing routes stay exactly as they are (models.Base.metadata.create_all, 
-#     /sync/dependabot, /sync/enrich, /sync/embed, /ask, etc.) ...
-
-# Mount MCP's HTTP transport under /mcp
+# Mount MCP LAST, after every other route is registered
 app.mount("", mcp_app)
-
-
-
-
-   
-
-
-
