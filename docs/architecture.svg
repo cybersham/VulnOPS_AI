@@ -1,125 +1,99 @@
-<svg viewBox="0 0 1150 750" xmlns="http://www.w3.org/2000/svg" font-family="Helvetica, Arial, sans-serif">
+<svg viewBox="0 0 1150 700" xmlns="http://www.w3.org/2000/svg" font-family="Helvetica, Arial, sans-serif">
   <defs>
     <marker id="arrow" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto" markerUnits="strokeWidth">
       <path d="M0,0 L0,6 L9,3 z" fill="#475569"/>
-    </marker>
-    <marker id="arrowGrey" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto" markerUnits="strokeWidth">
-      <path d="M0,0 L0,6 L9,3 z" fill="#9ca3af"/>
     </marker>
     <filter id="softShadow" x="-20%" y="-20%" width="140%" height="140%">
       <feDropShadow dx="0" dy="2" stdDeviation="3" flood-opacity="0.12"/>
     </filter>
   </defs>
 
-  <rect width="1150" height="750" fill="#ffffff"/>
+  <rect width="1150" height="700" fill="#ffffff"/>
 
-  <!-- Title -->
   <text x="575" y="38" text-anchor="middle" font-size="24" font-weight="bold" fill="#0f172a">VulnOps AI — Architecture</text>
-  <text x="575" y="60" text-anchor="middle" font-size="13" fill="#64748b">Docker-based vulnerability pipeline with MCP + RAG query layer</text>
+  <text x="575" y="60" text-anchor="middle" font-size="13" fill="#64748b">Live, cloud-deployed AI vulnerability pipeline with MCP + RAG query layer</text>
 
   <!-- External sources (left) -->
-  <rect x="30" y="110" width="190" height="90" rx="12" fill="#eef2ff" stroke="#6366f1" stroke-width="1.5" filter="url(#softShadow)"/>
-  <text x="125" y="138" text-anchor="middle" font-size="13" font-weight="bold" fill="#3730a3">GitHub</text>
-  <text x="125" y="156" text-anchor="middle" font-size="12" fill="#3730a3">Dependabot Alerts</text>
-  <text x="125" y="188" text-anchor="middle" font-size="10" fill="#6366f1">Layer 2 · Ingestion</text>
+  <rect x="30" y="110" width="180" height="90" rx="12" fill="#eef2ff" stroke="#6366f1" stroke-width="1.5" filter="url(#softShadow)"/>
+  <text x="120" y="138" text-anchor="middle" font-size="13" font-weight="bold" fill="#3730a3">GitHub</text>
+  <text x="120" y="156" text-anchor="middle" font-size="12" fill="#3730a3">Dependabot Alerts</text>
+  <text x="120" y="188" text-anchor="middle" font-size="10" fill="#6366f1">Layer 2 · Ingestion</text>
 
-  <rect x="30" y="230" width="190" height="90" rx="12" fill="#fff7ed" stroke="#ea580c" stroke-width="1.5" filter="url(#softShadow)"/>
-  <text x="125" y="256" text-anchor="middle" font-size="13" font-weight="bold" fill="#9a3412">NVD + CISA KEV</text>
-  <text x="125" y="274" text-anchor="middle" font-size="11" fill="#9a3412">CVSS + exploited flag</text>
-  <text x="125" y="304" text-anchor="middle" font-size="10" fill="#ea580c">Layer 3 · Enrichment</text>
+  <rect x="30" y="230" width="180" height="90" rx="12" fill="#fff7ed" stroke="#ea580c" stroke-width="1.5" filter="url(#softShadow)"/>
+  <text x="120" y="256" text-anchor="middle" font-size="13" font-weight="bold" fill="#9a3412">NVD + CISA KEV</text>
+  <text x="120" y="274" text-anchor="middle" font-size="11" fill="#9a3412">CVSS + exploited flag</text>
+  <text x="120" y="304" text-anchor="middle" font-size="10" fill="#ea580c">Layer 3 · Enrichment</text>
 
-  <rect x="30" y="350" width="190" height="90" rx="12" fill="#fdf4ff" stroke="#a21caf" stroke-width="1.5" filter="url(#softShadow)"/>
-  <text x="125" y="376" text-anchor="middle" font-size="13" font-weight="bold" fill="#701a75">Gemini API</text>
-  <text x="125" y="394" text-anchor="middle" font-size="11" fill="#701a75">Embeddings + RAG</text>
-  <text x="125" y="424" text-anchor="middle" font-size="10" fill="#a21caf">Layer 5b · Generation</text>
+  <rect x="30" y="350" width="180" height="90" rx="12" fill="#fdf4ff" stroke="#a21caf" stroke-width="1.5" filter="url(#softShadow)"/>
+  <text x="120" y="376" text-anchor="middle" font-size="13" font-weight="bold" fill="#701a75">Gemini API</text>
+  <text x="120" y="394" text-anchor="middle" font-size="11" fill="#701a75">Embeddings + RAG</text>
+  <text x="120" y="424" text-anchor="middle" font-size="10" fill="#a21caf">Layer 5b · Generation</text>
 
-  <!-- Docker Compose grouping box -->
-  <rect x="270" y="95" width="560" height="430" rx="18" fill="#f8fafc" stroke="#cbd5e1" stroke-width="2"/>
-  <text x="295" y="122" font-size="14" font-weight="bold" fill="#334155">🐳 Docker Compose Stack</text>
+  <!-- Render deployment grouping box -->
+  <rect x="250" y="95" width="530" height="430" rx="18" fill="#f0fdf4" stroke="#16a34a" stroke-width="2"/>
+  <text x="270" y="122" font-size="14" font-weight="bold" fill="#15803d">☁️ Render (live, public URL)</text>
 
   <!-- app container box -->
-  <rect x="290" y="140" width="320" height="360" rx="12" fill="#ffffff" stroke="#94a3b8" stroke-width="1.5" stroke-dasharray="5,3"/>
-  <text x="450" y="160" text-anchor="middle" font-size="12" font-weight="bold" fill="#475569">app (container)</text>
+  <rect x="270" y="140" width="300" height="360" rx="12" fill="#ffffff" stroke="#94a3b8" stroke-width="1.5" stroke-dasharray="5,3"/>
+  <text x="420" y="160" text-anchor="middle" font-size="12" font-weight="bold" fill="#475569">app container</text>
 
-  <!-- FastAPI -->
-  <rect x="310" y="175" width="280" height="70" rx="10" fill="#ecfdf5" stroke="#059669" stroke-width="1.5" filter="url(#softShadow)"/>
-  <text x="450" y="202" text-anchor="middle" font-size="14" font-weight="bold" fill="#065f46">FastAPI Backend</text>
-  <text x="450" y="220" text-anchor="middle" font-size="11" fill="#059669">Layer 1 · Core app logic</text>
+  <rect x="290" y="175" width="260" height="65" rx="10" fill="#ecfdf5" stroke="#059669" stroke-width="1.5" filter="url(#softShadow)"/>
+  <text x="420" y="200" text-anchor="middle" font-size="14" font-weight="bold" fill="#065f46">FastAPI Backend</text>
+  <text x="420" y="217" text-anchor="middle" font-size="11" fill="#059669">Layer 1 · REST + core logic</text>
 
-  <!-- MCP Server -->
-  <rect x="310" y="260" width="280" height="80" rx="10" fill="#fef2f2" stroke="#dc2626" stroke-width="1.5" filter="url(#softShadow)"/>
-  <text x="450" y="284" text-anchor="middle" font-size="14" font-weight="bold" fill="#7f1d1d">MCP Server (stdio)</text>
-  <text x="450" y="301" text-anchor="middle" font-size="10.5" fill="#7f1d1d">get_open_findings · get_kev_findings</text>
-  <text x="450" y="316" text-anchor="middle" font-size="10.5" fill="#7f1d1d">ask_vulnerability_question</text>
+  <rect x="290" y="255" width="260" height="90" rx="10" fill="#fef2f2" stroke="#dc2626" stroke-width="1.5" filter="url(#softShadow)"/>
+  <text x="420" y="277" text-anchor="middle" font-size="14" font-weight="bold" fill="#7f1d1d">MCP Server</text>
+  <text x="420" y="294" text-anchor="middle" font-size="10" fill="#7f1d1d">stdio (local) + streamable-http (remote)</text>
+  <text x="420" y="308" text-anchor="middle" font-size="10" fill="#7f1d1d">3 tools · transport-secured allowlist</text>
+  <text x="420" y="323" text-anchor="middle" font-size="9" fill="#dc2626">Layer 4 · mounted at /mcp</text>
 
-  <!-- ChromaDB (inside app container) -->
-  <rect x="310" y="360" width="280" height="70" rx="10" fill="#eff6ff" stroke="#2563eb" stroke-width="1.5" filter="url(#softShadow)"/>
-  <text x="450" y="387" text-anchor="middle" font-size="14" font-weight="bold" fill="#1e3a8a">ChromaDB</text>
-  <text x="450" y="405" text-anchor="middle" font-size="11" fill="#2563eb">Layer 5a · Vector store (local volume)</text>
+  <rect x="290" y="365" width="260" height="65" rx="10" fill="#eff6ff" stroke="#2563eb" stroke-width="1.5" filter="url(#softShadow)"/>
+  <text x="420" y="390" text-anchor="middle" font-size="14" font-weight="bold" fill="#1e3a8a">ChromaDB</text>
+  <text x="420" y="407" text-anchor="middle" font-size="11" fill="#2563eb">Layer 5a · Vector store</text>
 
-  <!-- db container box -->
-  <rect x="625" y="140" width="185" height="360" rx="12" fill="#ffffff" stroke="#94a3b8" stroke-width="1.5" stroke-dasharray="5,3"/>
-  <text x="717" y="160" text-anchor="middle" font-size="12" font-weight="bold" fill="#475569">db (container)</text>
+  <!-- Neon Postgres box -->
+  <rect x="595" y="140" width="165" height="360" rx="12" fill="#ffffff" stroke="#94a3b8" stroke-width="1.5" stroke-dasharray="5,3"/>
+  <text x="677" y="160" text-anchor="middle" font-size="12" font-weight="bold" fill="#475569">Neon (external)</text>
 
-  <rect x="645" y="220" width="145" height="100" rx="10" fill="#ecfdf5" stroke="#059669" stroke-width="1.5" filter="url(#softShadow)"/>
-  <text x="717" y="255" text-anchor="middle" font-size="13" font-weight="bold" fill="#065f46">PostgreSQL</text>
-  <text x="717" y="273" text-anchor="middle" font-size="10.5" fill="#059669">CVE / Repository</text>
-  <text x="717" y="288" text-anchor="middle" font-size="10.5" fill="#059669">/ Finding</text>
+  <rect x="610" y="220" width="135" height="100" rx="10" fill="#ecfdf5" stroke="#059669" stroke-width="1.5" filter="url(#softShadow)"/>
+  <text x="677" y="255" text-anchor="middle" font-size="13" font-weight="bold" fill="#065f46">PostgreSQL</text>
+  <text x="677" y="273" text-anchor="middle" font-size="10" fill="#059669">CVE / Repository</text>
+  <text x="677" y="288" text-anchor="middle" font-size="10" fill="#059669">/ Finding</text>
+  <text x="677" y="305" text-anchor="middle" font-size="9" fill="#059669">persistent free tier</text>
 
-  <!-- Clients (right, outside Docker) -->
-  <rect x="890" y="150" width="220" height="80" rx="12" fill="#f5f3ff" stroke="#7c3aed" stroke-width="1.5" filter="url(#softShadow)"/>
-  <text x="1000" y="177" text-anchor="middle" font-size="14" font-weight="bold" fill="#4c1d95">Claude Desktop</text>
-  <text x="1000" y="195" text-anchor="middle" font-size="10.5" fill="#7c3aed">docker exec · stdio pipe</text>
-  <text x="1000" y="212" text-anchor="middle" font-size="10.5" fill="#7c3aed">local dev client</text>
+  <!-- Clients (right, outside Render) -->
+  <rect x="850" y="150" width="260" height="75" rx="12" fill="#f5f3ff" stroke="#7c3aed" stroke-width="1.5" filter="url(#softShadow)"/>
+  <text x="980" y="176" text-anchor="middle" font-size="14" font-weight="bold" fill="#4c1d95">Claude Desktop</text>
+  <text x="980" y="193" text-anchor="middle" font-size="10" fill="#7c3aed">local dev: docker exec · stdio</text>
+  <text x="980" y="208" text-anchor="middle" font-size="10" fill="#7c3aed">or remote via streamable-http</text>
 
-  <rect x="890" y="250" width="220" height="80" rx="12" fill="#f5f3ff" stroke="#7c3aed" stroke-width="1.5" filter="url(#softShadow)"/>
-  <text x="1000" y="277" text-anchor="middle" font-size="14" font-weight="bold" fill="#4c1d95">Ollama (llama3.1)</text>
-  <text x="1000" y="295" text-anchor="middle" font-size="10.5" fill="#7c3aed">manual tool-calling loop</text>
-  <text x="1000" y="312" text-anchor="middle" font-size="10.5" fill="#7c3aed">self-hosted, no cloud LLM</text>
+  <rect x="850" y="240" width="260" height="75" rx="12" fill="#f5f3ff" stroke="#7c3aed" stroke-width="1.5" filter="url(#softShadow)"/>
+  <text x="980" y="266" text-anchor="middle" font-size="14" font-weight="bold" fill="#4c1d95">Ollama (llama3.1)</text>
+  <text x="980" y="283" text-anchor="middle" font-size="10" fill="#7c3aed">manual tool-calling loop</text>
+  <text x="980" y="298" text-anchor="middle" font-size="10" fill="#7c3aed">self-hosted, no cloud LLM</text>
+
+  <rect x="850" y="330" width="260" height="75" rx="12" fill="#f5f3ff" stroke="#7c3aed" stroke-width="1.5" filter="url(#softShadow)"/>
+  <text x="980" y="356" text-anchor="middle" font-size="14" font-weight="bold" fill="#4c1d95">ChatGPT / Gemini</text>
+  <text x="980" y="373" text-anchor="middle" font-size="10" fill="#7c3aed">remote MCP via streamable-http</text>
+  <text x="980" y="388" text-anchor="middle" font-size="10" fill="#7c3aed">(Developer Mode / custom connector)</text>
 
   <!-- Arrows -->
-  <path d="M220,155 L305,200" stroke="#475569" stroke-width="2" fill="none" marker-end="url(#arrow)"/>
-  <path d="M220,275 L305,290" stroke="#475569" stroke-width="2" fill="none" marker-end="url(#arrow)"/>
-  <path d="M220,395 L305,395" stroke="#475569" stroke-width="2" fill="none" marker-end="url(#arrow)"/>
+  <path d="M210,155 L265,200" stroke="#475569" stroke-width="2" fill="none" marker-end="url(#arrow)"/>
+  <path d="M210,275 L265,290" stroke="#475569" stroke-width="2" fill="none" marker-end="url(#arrow)"/>
+  <path d="M210,395 L265,395" stroke="#475569" stroke-width="2" fill="none" marker-end="url(#arrow)"/>
 
-  <path d="M450,245 L450,257" stroke="#475569" stroke-width="2" fill="none" marker-end="url(#arrow)"/>
-  <path d="M450,340 L450,357" stroke="#475569" stroke-width="2" fill="none" marker-end="url(#arrow)"/>
-  <path d="M590,210 L648,255" stroke="#475569" stroke-width="2" fill="none" marker-end="url(#arrow)"/>
+  <path d="M420,240 L420,253" stroke="#475569" stroke-width="2" fill="none" marker-end="url(#arrow)"/>
+  <path d="M420,345 L420,363" stroke="#475569" stroke-width="2" fill="none" marker-end="url(#arrow)"/>
+  <path d="M550,210 L605,255" stroke="#475569" stroke-width="2" fill="none" marker-end="url(#arrow)"/>
 
-  <!-- MCP -> Clients -->
-  <path d="M590,300 L885,190" stroke="#475569" stroke-width="2" fill="none" marker-end="url(#arrow)"/>
-  <path d="M590,300 L885,290" stroke="#475569" stroke-width="2" fill="none" marker-end="url(#arrow)"/>
+  <path d="M550,300 L845,187" stroke="#475569" stroke-width="2" fill="none" marker-end="url(#arrow)"/>
+  <path d="M550,300 L845,277" stroke="#475569" stroke-width="2" fill="none" marker-end="url(#arrow)"/>
+  <path d="M550,300 L845,367" stroke="#475569" stroke-width="2" fill="none" marker-end="url(#arrow)"/>
 
-  <text x="450" y="70" text-anchor="middle" font-size="10" fill="#94a3b8"></text>
-  <text x="270" y="545" font-size="11" fill="#64748b">Solid = data flow · Dashed borders = container boundaries</text>
+  <text x="270" y="545" font-size="11" fill="#64748b">Solid = data flow · Dashed borders = deployment boundaries · Green box = live on Render</text>
 
-  <!-- Divider -->
-  <line x1="30" y1="580" x2="1120" y2="580" stroke="#e2e8f0" stroke-width="2"/>
+  <line x1="30" y1="570" x2="1120" y2="570" stroke="#e2e8f0" stroke-width="2"/>
 
-  <!-- Planned section -->
-  <text x="30" y="610" font-size="15" font-weight="bold" fill="#6b7280">Planned Next Step — Phase 2: Cloud Deployment</text>
-
-  <rect x="30" y="625" width="255" height="85" rx="12" fill="#f9fafb" stroke="#9ca3af" stroke-width="1.5" stroke-dasharray="6,4"/>
-  <text x="157" y="653" text-anchor="middle" font-size="13" font-weight="bold" fill="#4b5563">Render</text>
-  <text x="157" y="671" text-anchor="middle" font-size="10.5" fill="#6b7280">FastAPI app, public URL</text>
-  <text x="157" y="687" text-anchor="middle" font-size="10" fill="#9ca3af">free tier</text>
-
-  <rect x="310" y="625" width="255" height="85" rx="12" fill="#f9fafb" stroke="#9ca3af" stroke-width="1.5" stroke-dasharray="6,4"/>
-  <text x="437" y="653" text-anchor="middle" font-size="13" font-weight="bold" fill="#4b5563">Neon Postgres</text>
-  <text x="437" y="671" text-anchor="middle" font-size="10.5" fill="#6b7280">persistent free-tier DB</text>
-  <text x="437" y="687" text-anchor="middle" font-size="10" fill="#9ca3af">replaces local db container</text>
-
-  <rect x="590" y="625" width="255" height="85" rx="12" fill="#f9fafb" stroke="#9ca3af" stroke-width="1.5" stroke-dasharray="6,4"/>
-  <text x="717" y="653" text-anchor="middle" font-size="13" font-weight="bold" fill="#4b5563">MCP · streamable-http</text>
-  <text x="717" y="671" text-anchor="middle" font-size="10.5" fill="#6b7280">remote-reachable transport</text>
-  <text x="717" y="687" text-anchor="middle" font-size="10" fill="#9ca3af">replaces stdio for remote clients</text>
-
-  <rect x="870" y="625" width="250" height="85" rx="12" fill="#f9fafb" stroke="#9ca3af" stroke-width="1.5" stroke-dasharray="6,4"/>
-  <text x="995" y="653" text-anchor="middle" font-size="13" font-weight="bold" fill="#4b5563">ChatGPT / Gemini</text>
-  <text x="995" y="671" text-anchor="middle" font-size="10.5" fill="#6b7280">custom connector</text>
-  <text x="995" y="687" text-anchor="middle" font-size="10" fill="#9ca3af">(Developer Mode)</text>
-
-  <path d="M285,667 L305,667" stroke="#9ca3af" stroke-width="2" fill="none" marker-end="url(#arrowGrey)"/>
-  <path d="M565,667 L585,667" stroke="#9ca3af" stroke-width="2" fill="none" marker-end="url(#arrowGrey)"/>
-  <path d="M845,667 L865,667" stroke="#9ca3af" stroke-width="2" fill="none" marker-end="url(#arrowGrey)"/>
+  <text x="30" y="600" font-size="15" font-weight="bold" fill="#6b7280">Roadmap — Phase 3 (Not Yet Built)</text>
+  <text x="30" y="625" font-size="12" fill="#6b7280">Trivy ingestion (2nd scanner)  ·  Risk Scoring Engine (EPSS + KEV + business context)  ·  Streamlit "Top 100 Risks" dashboard</text>
 </svg>

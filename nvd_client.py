@@ -19,13 +19,18 @@ def fetch_cve_from_nvd(cve_id: str):
         return None
 
     cve_data = vulnerabilities[0]["cve"]
-
-    # Try CVSS v3.1 first, fall back to v3.0
     metrics = cve_data.get("metrics", {})
     cvss_score = None
+    cvss_version = None
+
     if "cvssMetricV31" in metrics:
         cvss_score = metrics["cvssMetricV31"][0]["cvssData"]["baseScore"]
+        cvss_version = "3.1"
     elif "cvssMetricV30" in metrics:
         cvss_score = metrics["cvssMetricV30"][0]["cvssData"]["baseScore"]
+        cvss_version = "3.0"
+    elif "cvssMetricV2" in metrics:
+        cvss_score = metrics["cvssMetricV2"][0]["cvssData"]["baseScore"]
+        cvss_version = "2.0"
 
-    return {"cvss_score": cvss_score}
+    return {"cvss_score": cvss_score, "cvss_version": cvss_version}

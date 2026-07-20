@@ -43,7 +43,7 @@ def embed_and_store_cves(db: Session) -> dict:
                 metadatas=[{
                     "cve_id": cve.cve_id,
                     "severity": cve.severity or "UNKNOWN",
-                    "cvss_score": cve.cvss_score or 0.0,
+                    "cvss_score": cve.cvss_score if cve.cvss_score is not None else -1,
                     "is_kev": cve.is_kev
                 }]
             )
@@ -67,7 +67,7 @@ def query_vulnerabilities_semantic(question: str, n_results: int=5) -> dict:
          contents=question,
          config=EmbedContentConfig(task_type="RETRIEVAL_QUERY")
      )
-
+    
      query_vector = query_embedding_response.embeddings[0].values
 
      # Step 2: search Chroma for the closest matching CVE descriptions
@@ -85,10 +85,12 @@ def query_vulnerabilities_semantic(question: str, n_results: int=5) -> dict:
      
     # Step 3: build context from retrieved CVEs
      context_lines =[]
-     for doc,meta in zip(matched_docs, matched_metadata):
-         context_lines.append(
-            f"- {meta['cve_id']} ({meta['severity']}, CVSS {meta['cvss_score']}): {doc}"
-         )
+     for doc, meta in zip(matched_docs, matched_metadata):
+        cvss_display = "not yet scored by NVD" if meta['cvss_score'] == -1 else meta['cvss_score']
+        context_lines.append(
+        f"- {meta['cve_id']} ({meta['severity']}, CVSS {cvss_display}): {doc}"
+    )
+
      context = "\n".join(context_lines)
 
      # Step 4: ask Gemini to answer using only this retrieved context
@@ -113,4 +115,6 @@ Answer:"""
          "answer": response.text,
          "sources": [meta["cve_id"] for meta in matched_metadata]
      }
+
+
 

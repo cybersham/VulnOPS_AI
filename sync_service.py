@@ -69,3 +69,60 @@ def sync_dependabot_alerts(alerts: list, repo_owner: str, repo_name: str, db: Se
             synced_count += 1
 
     return synced_count
+
+
+def sync_trivy_findings(trivy_vulns: list[dict], repo_owner: str, repo_name: str, db: Session) -> int:
+    repo = db.query(models.Repository).filter(
+        models.Repository.name == repo_name,
+        models.Repository.owner == repo_owner
+    ).first()
+
+    if not repo:
+        repo = models.Repository(
+            name=repo_name,
+            owner=repo_owner,
+            url=f"https://github.com/{repo_owner}/{repo_name}"
+        )
+        db.add(repo)
+        db.commit()
+        db.refresh(repo)
+
+    synced_count = 0
+
+    for vuln in trivy_vulns:
+        cve_id_str = vuln["cve_id"]
+        if not cve_id_str or not cve_id_str.startswith("CVE-"):
+            continue  # skip non-CVE advisories (e.g. Trivy sometimes reports GHSA-only entries)
+
+        cve = db.query(models.CVE).filter(models.CVE.cve_id == cve_id_str).first()
+        if not cve:
+            cve = models.CVE(
+                cve_id=cve_id_str,
+                description=vuln["description"][:1000],  # keep descriptions reasonably sized
+                severity=vuln["severity"],
+            )
+            db.add(cve)
+            db.commit()
+            db.refresh(cve)
+
+        existing_finding = db.query(models.Findings).filter(
+            models.Findings.cve_id == cve.id,
+            models.Findings.repository_id == repo.id,
+            models.Findings.affected_package == vuln["package"],
+            models.Findings.source == "trivy"
+        ).first()
+
+        if not existing_finding:
+            finding = models.Findings(
+                cve_id=cve.id,
+                repository_id=repo.id,
+                affected_package=vuln["package"],
+                affected_version=vuln["installed_version"],
+                status="open",
+                source="trivy"
+            )
+            db.add(finding)
+            db.commit()
+            synced_count += 1
+
+    return synced_count
