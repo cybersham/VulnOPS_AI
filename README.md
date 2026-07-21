@@ -1,12 +1,11 @@
 # VulnOps AI
-
-A live, AI-powered vulnerability management platform that ingests findings from two real scanners (GitHub Dependabot + Trivy), enriches them with NVD, CISA KEV, and FIRST.org EPSS threat intelligence, computes a weighted business-risk score per finding, and lets you query the result in plain English via MCP tools and RAG.
+An AI-powered risk-based  vulnerability management platform that ingests findings from two real scanners (GitHub Dependabot + Trivy), enriches them with NVD, CISA KEV, and FIRST.org EPSS threat intelligence, computes a weighted business-risk score per finding, and lets you query the result in plain English via MCP tools and RAG.
 
 **Live demo:** `https://vulnops-ai.onrender.com` *(free-tier hosting — first request after idle may take ~30-60s to cold-start)*
 
 ## The Problem This Solves
 
-Most vulnerability scanners are excellent at finding problems and terrible at telling you which ones matter. A single container image scan can easily surface 150+ findings; a real org running Dependabot, Trivy, and cloud scanners across many repos generates far more than any team can triage by hand. Sorting by CVSS score alone is a weak strategy — CVSS measures theoretical severity, not real-world exploitation likelihood, and (as this project's own data shows) different tools sometimes disagree on both.
+Most vulnerability scanners are excellent at identifying problems but poor at determining which ones are critical. A single container image scan can easily surface over 150 findings; a real organization running Dependabot, Trivy, and cloud scanners across multiple repositories generates far more than any team can triage by hand. Sorting by CVSS score alone is a weak strategy — CVSS measures theoretical severity, not real-world exploitation likelihood, and (as this project's own data shows) different tools sometimes disagree on both.
 
 The actual question a CISO asks is not "how many vulnerabilities do we have" — it's:
 
@@ -36,7 +35,7 @@ Risk Score = 30% Business Criticality
            + 25% EPSS (exploitation probability)
            + 20% KEV (confirmed active exploitation)
            + 15% Internet Exposure
-           + 10% Compensating Controls (inverted — more controls lowers risk)
+           + 10% Compensating Controls (inverted — more controls lower risk)
 ```
 
 Exposed at `GET /risk/top?limit=N` — returns findings across **both** scanners, ranked by computed score, not raw CVSS.
@@ -92,11 +91,21 @@ FastAPI · SQLAlchemy · PostgreSQL (Neon) · Docker · ChromaDB · Google Gemin
 - CVSS scoring relies solely on NVD, which can lag vendor-specific advisories for very recent CVEs
 - Business Criticality, Internet Exposure, and Compensating Controls are currently manually-tagged defaults per repository, not yet a real per-asset tagging UI
 
+## Dashboard (Streamlit)
+
+A local Streamlit dashboard (`dashboard_app.py`) provides a visual "Top Risks" view over `/risk/top`, with color-coded risk banding (red/amber/green) and a per-CVE "Explain this finding" button that calls the existing `/ask` RAG endpoint for an AI-generated explanation.
+
+```bash
+streamlit run dashboard_app.py
+```
+
+**Known limitation**: the "Explain this finding" feature occasionally hits `503 UNAVAILABLE` from Gemini's API during periods of high demand — a transient upstream rate-limit/capacity issue, not a bug in the dashboard or RAG pipeline itself. The main risk table (via `/risk/top`) is unaffected, since it doesn't call Gemini at all — only the optional per-CVE explanation does. A production version would add retry-with-backoff around the Gemini call to smooth over these transient failures.
+
+
 ## Roadmap
 
-- **Streamlit dashboard** — a "Top 100 Risks" view over `/risk/top`, with AI-generated plain-English explanations per finding
 - Vendor-advisory fallback (ALAS, Tenable) for CVEs NVD hasn't scored yet
-- Per-finding manual tagging UI for business criticality / exposure / controls, replacing per-repository defaults
+- Per-finding manual tagging UI for business criticality/exposure/controls, replacing per-repository defaults
 
 ## Running Locally
 
