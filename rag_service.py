@@ -60,44 +60,82 @@ def embed_and_store_cves(db: Session) -> dict:
 
 
 
-def query_vulnerabilities_semantic(question: str, n_results: int=5) -> dict:
-     # Step 1: embed the user's question (note: RETRIEVAL_QUERY, not RETRIEVAL_DOCUMENT)
-     query_embedding_response = client.models.embed_content(
-         model="gemini-embedding-001",
-         contents=question,
-         config=EmbedContentConfig(task_type="RETRIEVAL_QUERY")
-     )
+# def query_vulnerabilities_semantic(question: str, n_results: int=5) -> dict:
+#      # Step 1: embed the user's question (note: RETRIEVAL_QUERY, not RETRIEVAL_DOCUMENT)
+#      query_embedding_response = client.models.embed_content(
+#          model="gemini-embedding-001",
+#          contents=question,
+#          config=EmbedContentConfig(task_type="RETRIEVAL_QUERY")
+#      )
     
-     query_vector = query_embedding_response.embeddings[0].values
+#      query_vector = query_embedding_response.embeddings[0].values
 
-     # Step 2: search Chroma for the closest matching CVE descriptions
-     results=collection.query(
-          query_embeddings=[query_vector],
-          n_results=n_results
+#      # Step 2: search Chroma for the closest matching CVE descriptions
+#      results=collection.query(
+#           query_embeddings=[query_vector],
+#           n_results=n_results
 
-     )
+#      )
 
-     matched_docs = results["documents"][0]
-     matched_metadata = results["metadatas"][0]
+#      matched_docs = results["documents"][0]
+#      matched_metadata = results["metadatas"][0]
 
-     if not matched_docs:
-         return{"answer" : "No relevant vulnerabilities found." , "sources": []}
+#      if not matched_docs:
+#          return{"answer" : "No relevant vulnerabilities found." , "sources": []}
      
-    # Step 3: build context from retrieved CVEs
-     context_lines =[]
-     for doc, meta in zip(matched_docs, matched_metadata):
-        cvss_display = "not yet scored by NVD" if meta['cvss_score'] == -1 else meta['cvss_score']
-        context_lines.append(
-        f"- {meta['cve_id']} ({meta['severity']}, CVSS {cvss_display}): {doc}"
-    )
+#     # Step 3: build context from retrieved CVEs
+#      context_lines =[]
+#      for doc, meta in zip(matched_docs, matched_metadata):
+#         cvss_display = "not yet scored by NVD" if meta['cvss_score'] == -1 else meta['cvss_score']
+#         context_lines.append(
+#         f"- {meta['cve_id']} ({meta['severity']}, CVSS {cvss_display}): {doc}"
+#     )
 
-     context = "\n".join(context_lines)
+#      context = "\n".join(context_lines)
 
-     # Step 4: ask Gemini to answer using only this retrieved context
+#      # Step 4: ask Gemini to answer using only this retrieved context
 
-     prompt =  f"""You are a vulnerability management assistant. Answer the user's question
-using ONLY the vulnerability data provided below. If the data doesn't contain relevant
-information to answer the question, say so clearly.
+#      prompt =  f"""You are a vulnerability management assistant. Answer the user's question
+# using ONLY the vulnerability data provided below. If the data doesn't contain relevant
+# information to answer the question, say so clearly.
+
+# Vulnerability data:
+# {context}
+
+# Question: {question}
+
+# Answer:"""
+#      response = client.models.generate_content(
+#          model="gemini-3.5-flash",
+#          contents=prompt
+
+#      )
+     
+#      return{
+#          "answer": response.text,
+#          "sources": [meta["cve_id"] for meta in matched_metadata]
+#      }
+
+
+
+
+import re
+
+def query_vulnerabilities_semantic(question: str, n_results: int = 5) -> dict:
+    # Check if the question contains an exact CVE ID — if so, fetch it directly
+    cve_match = re.search(r"CVE-\d{4}-\d+", question, re.IGNORECASE)
+
+    if cve_match:
+        cve_id = cve_match.group(0).upper()
+        try:
+            exact_result = collection.get(ids=[cve_id], include=["documents", "metadatas"])
+            if exact_result["ids"]:
+                doc = exact_result["documents"][0]
+                meta = exact_result["metadatas"][0]
+                context = f"- {meta['cve_id']} ({meta['severity']}, CVSS {meta['cvss_score']}): {doc}"
+
+                prompt = f"""You are a vulnerability management assistant. Answer the user's
+question using ONLY the vulnerability data provided below.
 
 Vulnerability data:
 {context}
@@ -105,16 +143,57 @@ Vulnerability data:
 Question: {question}
 
 Answer:"""
-     response = client.models.generate_content(
-         model="gemini-3.5-flash",
-         contents=prompt
 
-     )
-     
-     return{
-         "answer": response.text,
-         "sources": [meta["cve_id"] for meta in matched_metadata]
-     }
+                response = client.models.generate_content(
+                    model="gemini-3.5-flash",
+                    contents=prompt
+                )
+                return {"answer": response.text, "sources": [cve_id]}
+        except Exception:
+            pass  # if exact lookup fails for any reason, fall through to semantic search below
 
+    # Fall back to semantic search for fuzzy/non-exact-ID questions
+    query_embedding_response = client.models.embed_content(
+        model="gemini-embedding-001",
+        contents=question,
+        config=EmbedContentConfig(task_type="RETRIEVAL_QUERY")
+    )
+    query_vector = query_embedding_response.embeddings[0].values
 
+    results = collection.query(
+        query_embeddings=[query_vector],
+        n_results=n_results
+    )
 
+    matched_docs = results["documents"][0]
+    matched_metadata = results["metadatas"][0]
+
+    if not matched_docs:
+        return {"answer": "No relevant vulnerabilities found.", "sources": []}
+
+    context_lines = []
+    for doc, meta in zip(matched_docs, matched_metadata):
+        context_lines.append(
+            f"- {meta['cve_id']} ({meta['severity']}, CVSS {meta['cvss_score']}): {doc}"
+        )
+    context = "\n".join(context_lines)
+
+    prompt = f"""You are a vulnerability management assistant. Answer the user's question
+using ONLY the vulnerability data provided below.
+
+Vulnerability data:
+{context}
+
+Question: {question}
+
+Answer:"""
+
+    response = client.models.generate_content(
+        model="gemini-3.5-flash",
+        contents=prompt
+    )
+
+    return {
+        "answer": response.text,
+        "sources": [meta["cve_id"] for meta in matched_metadata]
+    }

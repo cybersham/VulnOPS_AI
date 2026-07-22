@@ -154,6 +154,10 @@ class QuestionRequest(BaseModel):
 def ask_question(request: QuestionRequest):
     return query_vulnerabilities_semantic(request.question)
 
+# @app.post("/get_top_risks")
+# def ask_question(request: QuestionRequest):
+#     return query_vulnerabilities_semantic(request.question)
+
 
 
 # Mount MCP LAST, after every other route is registered

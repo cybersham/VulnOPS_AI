@@ -3,6 +3,7 @@ from sqlalchemy.orm import Session
 from database import sessionLocal
 import models
 from rag_service import query_vulnerabilities_semantic
+from risk_engine import calculate_risk_score
 import os 
 from mcp.server.transport_security import TransportSecuritySettings
 
@@ -85,6 +86,42 @@ def ask_vulnerability_question(question: str) -> dict:
     KEV findings), prefer get_open_findings or get_kev_findings instead.
     """
     return query_vulnerabilities_semantic(question)
+
+
+
+@mcp.tool()
+def get_top_risks(limit: int = 10) -> list[dict]:
+    """
+    Returns findings ranked by computed business risk score (not raw CVSS),
+    weighted across Business Criticality, EPSS exploitation probability,
+    CISA KEV status, Internet Exposure, and Compensating Controls.
+    Use this when asked about "top risks", "highest priority", or "which
+    vulnerabilities matter most" — as opposed to get_open_findings, which
+    returns everything unranked.
+    """
+    db = get_db_session()
+    try:
+        findings = db.query(models.Findings).filter(models.Findings.status == "open").all()
+
+        scored = []
+        for f in findings:
+            score = calculate_risk_score(f, f.cve, f.repository)
+            scored.append({
+                "cve_id": f.cve.cve_id,
+                "severity": f.cve.severity,
+                "cvss_score": f.cve.cvss_score,
+                "epss_score": f.cve.epss_score,
+                "is_kev": f.cve.is_kev,
+                "affected_package": f.affected_package,
+                "source": f.source,
+                "repository": f.repository.name,
+                "risk_score": score
+            })
+
+        scored.sort(key=lambda x: x["risk_score"], reverse=True)
+        return scored[:limit]
+    finally:
+        db.close()
 
 if __name__ == "__main__":
     mcp.run(transport="stdio")
